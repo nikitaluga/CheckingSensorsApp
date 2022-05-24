@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">CheckingSensorsApp</string>
+
+    <!-- String for the orientation values. The %1$.2f part is a placeholder
+     that will be filled in at runtime:
+     %1 is the value to replace
+     $.2f says the value is a float, with two decimal places.  -->
+    <string name="value_format">%1$.2f</string>
 </resources>
