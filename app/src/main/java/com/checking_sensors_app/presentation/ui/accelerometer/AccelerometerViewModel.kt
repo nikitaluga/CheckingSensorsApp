@@ -6,7 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.lifecycle.ViewModel
-import com.checking_sensors_app.R
 import com.checking_sensors_app.extensions.roundTo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,9 +22,9 @@ class AccelerometerViewModel constructor(
 
     override fun onSensorChanged(event: SensorEvent) {
         _sensorReadings.value = Triple(
-            event.values[0].roundTo(context),
-            event.values[1].roundTo(context),
-            event.values[2].roundTo(context)
+            event.values[0],
+            event.values[1],
+            event.values[2]
         )
     }
 
@@ -48,13 +47,12 @@ class AccelerometerViewModel constructor(
         pitchMax: Float,
         pitchMin: Float,
         pitchDiff: Float
-    ): String {
-        return when (ordinateNumber) {
-            0 -> pitchMax
-            1 -> (pitchDiff + pitchDiff / 4)
-            2 -> (pitchDiff / 2)
-            3 -> (pitchDiff - pitchDiff / 4)
-            else -> pitchMin
-        }.toString()
-    }
+    ) = when (ordinateNumber) {
+        0 -> pitchMax
+        1 -> (pitchDiff + pitchDiff / 4f)
+        2 -> (pitchDiff / 2f)
+        3 -> (pitchDiff - pitchDiff / 4f)
+        else -> pitchMin
+    }.roundTo(context)
+
 }

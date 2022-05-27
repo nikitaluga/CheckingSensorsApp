@@ -95,7 +95,7 @@ fun LineChart(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(360.dp)
+            .height(150.dp)
             .padding(16.dp),
         elevation = 10.dp
     ) {
@@ -104,11 +104,15 @@ fun LineChart(
                 .padding(8.dp)
         ) {
             Row {
-                Column(modifier = Modifier.weight(10f)) {
+                Column(modifier = Modifier
+                    .weight(10f)
+                    .height(100.dp)) {
                     TableHint()
                     AbscissaValues()
                 }
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier
+                    .weight(1f)
+                    .height(100.dp)) {
                     OrdinateValues(viewModel, pitchMax, pitchMin, pitchDiff)
                 }
             }
@@ -179,11 +183,10 @@ private fun OrdinateValues(
 ) {
     repeat(5) {
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(20.dp),
             text = viewModel.setOrdinateValue(it, pitchMax, pitchMin, pitchDiff),
             fontSize = 6.sp,
             textAlign = TextAlign.Center
         )
-        if (it != 4) Spacer(modifier = Modifier.height(6.dp))
     }
 }
