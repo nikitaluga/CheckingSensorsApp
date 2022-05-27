@@ -10,12 +10,12 @@ import com.checking_sensors_app.presentation.ui.accelerometer.AccelerometerScree
 @Composable
 fun AppContent() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = Screen.Home.route) {
+    NavHost(navController, startDestination = Screen.Accelerometer.route) {
         composable(route = Screen.Home.route) {
             HomeScreen(navController)
         }
         composable(route = Screen.Accelerometer.route) {
-            AccelerometerScreen(navController)
+            AccelerometerScreen()
         }
     }
 }
