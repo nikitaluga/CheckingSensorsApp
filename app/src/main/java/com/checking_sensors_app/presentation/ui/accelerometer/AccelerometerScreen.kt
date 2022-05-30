@@ -12,8 +12,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.checking_sensors_app.extensions.pxToDp
 import kotlinx.coroutines.flow.collectLatest
 
@@ -69,7 +71,7 @@ fun AccelerometerScreen(
                 )
             }
         ) {
-            LineChart(viewModel, pitchMax.value, pitchMin.value, pinchDiff.value)
+            LineChart(viewModel, pitchMax.value, pitchMin.value, pinchDiff.value / 2)
         }
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(
@@ -90,7 +92,7 @@ fun LineChart(
     viewModel: AccelerometerViewModel,
     pitchMax: Float,
     pitchMin: Float,
-    pitchDiff: Float
+    average: Float
 ) {
     Card(
         modifier = Modifier
@@ -99,36 +101,43 @@ fun LineChart(
             .padding(16.dp),
         elevation = 10.dp
     ) {
-        Column(
+        val heightTable = pxToDp(160)
+        ConstraintLayout(
             modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
                 .padding(8.dp)
         ) {
-            Row {
-                Column(modifier = Modifier
-                    .weight(10f)
-                    .height(100.dp)) {
-                    TableHint()
-                    AbscissaValues()
-                }
-                Column(modifier = Modifier
-                    .weight(1f)
-                    .height(100.dp)) {
-                    OrdinateValues(viewModel, pitchMax, pitchMin, pitchDiff)
-                }
-            }
+            val (table, abscissa, ordinate) = createRefs()
+
+            TableHint(Modifier.constrainAs(table) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                end.linkTo(ordinate.start)
+            }, heightTable)
+            AbscissaValues(Modifier.constrainAs(abscissa) {
+                start.linkTo(parent.start)
+                top.linkTo(table.bottom, margin = 8.dp)
+                end.linkTo(ordinate.start)
+            })
+            OrdinateValues(Modifier.constrainAs(ordinate) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+            }, heightTable, viewModel, pitchMax, pitchMin, average)
         }
     }
 }
 
 @Composable
-private fun TableHint() {
+private fun TableHint(modifier: Modifier, heightTable: Dp) {
     Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(pxToDp(175))
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .height(heightTable)
             .padding(4.dp)
     ) {
         val drawWidth = size.width
+        val gapBetweenTwoLines = drawWidth / 6
 
         var y = 0f
         repeat(5) {
@@ -141,9 +150,8 @@ private fun TableHint() {
             y += 40f
         }
 
-        val xCoordinates = drawWidth / 6f
         repeat(7) {
-            val x = xCoordinates * it.toFloat()
+            val x = gapBetweenTwoLines * it.toFloat()
             drawLine(
                 start = Offset(x, -10f),
                 end = Offset(x, 170f),
@@ -155,11 +163,9 @@ private fun TableHint() {
 }
 
 @Composable
-private fun AbscissaValues() {
+private fun AbscissaValues(modifier: Modifier) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 3.dp),
+        modifier = modifier.fillMaxWidth(0.9f),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         var timeStampMax = 30
@@ -176,17 +182,26 @@ private fun AbscissaValues() {
 
 @Composable
 private fun OrdinateValues(
+    modifier: Modifier,
+    heightTable: Dp,
     viewModel: AccelerometerViewModel,
     pitchMax: Float,
     pitchMin: Float,
-    pitchDiff: Float
+    average: Float
 ) {
-    repeat(5) {
-        Text(
-            modifier = Modifier.fillMaxWidth().height(20.dp),
-            text = viewModel.setOrdinateValue(it, pitchMax, pitchMin, pitchDiff),
-            fontSize = 6.sp,
-            textAlign = TextAlign.Center
-        )
+    Column(
+        modifier = modifier
+            .fillMaxWidth(0.1f)
+            .height(heightTable + 8.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        repeat(5) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = viewModel.setOrdinateValue(it, pitchMax, pitchMin, average),
+                fontSize = 6.sp,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

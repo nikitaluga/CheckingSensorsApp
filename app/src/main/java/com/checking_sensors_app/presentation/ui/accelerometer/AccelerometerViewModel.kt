@@ -46,12 +46,12 @@ class AccelerometerViewModel constructor(
         ordinateNumber: Int,
         pitchMax: Float,
         pitchMin: Float,
-        pitchDiff: Float
+        average: Float
     ) = when (ordinateNumber) {
         0 -> pitchMax
-        1 -> (pitchDiff + pitchDiff / 4f)
-        2 -> (pitchDiff / 2f)
-        3 -> (pitchDiff - pitchDiff / 4f)
+        1 -> (average + average / 2)
+        2 -> (average)
+        3 -> (average - average / 2)
         else -> pitchMin
     }.roundTo(context)
 
