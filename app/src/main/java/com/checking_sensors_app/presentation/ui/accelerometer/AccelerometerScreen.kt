@@ -2,7 +2,6 @@ package com.checking_sensors_app.presentation.ui.accelerometer
 
 import android.content.Context
 import android.graphics.PointF
-import android.util.Log
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -38,7 +37,7 @@ fun AccelerometerScreen(
     val pitchMin = remember { mutableStateOf(0f) }
     val pinchDiff = remember { mutableStateOf(0f) }
 
-    val pinchCoordinatesY = remember { mutableStateListOf(0f) }
+    val pinchCoordinatesY = remember { mutableStateListOf<Float>() }
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.registerListener()
@@ -46,22 +45,22 @@ fun AccelerometerScreen(
             azimuth.value = it.first
             pitch.value = it.second
             roll.value = it.third
-
-            if (pitchMax.value < it.second) {
-                pitchMax.value = it.second
-                pinchDiff.value = pitchMax.value - pitchMin.value
-            }
-            if (pitchMin.value > it.second) {
-                pitchMin.value = it.second
-                pinchDiff.value = pitchMax.value - pitchMin.value
-            }
         }
     })
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.updateTask.run()
         viewModel.emitPitch.collectLatest { value ->
+            if (value == null) return@collectLatest
             pinchCoordinatesY.add(value)
+            if (pitchMax.value < value) {
+                pitchMax.value = value
+                pinchDiff.value = pitchMax.value + pitchMin.value
+            }
+            if (pitchMin.value > value) {
+                pitchMin.value = value
+                pinchDiff.value = pitchMax.value + pitchMin.value
+            }
         }
     })
 
@@ -100,7 +99,6 @@ fun AccelerometerScreen(
                 Text("Azimut: ${azimuth.value}")
                 Text("Pitch: ${pitch.value}")
                 Text("Roll: ${roll.value}")
-                Text("pinchY: ${pinchCoordinatesY.last()}")
             }
         }
     }
@@ -180,19 +178,21 @@ private fun TableHint(modifier: Modifier, pointCoordinates: List<Float>) {
             )
         }
 
-        var distance = widthTable / 30
+        val distance = widthTable / 30
         val maxValue = pointCoordinates.maxOrNull() ?: 0f
+        val minValue = pointCoordinates.minOrNull() ?: 0f
         val points = mutableListOf<PointF>()
 
         pointCoordinates.forEachIndexed { index, data ->
-            val indx: Float = index.toFloat()
-            val y0 = if (data >= 0) (maxValue - data) * (HEIGHT_TABLE_PX / maxValue) else HEIGHT_TABLE_PX
+            val y0 =
+                if (data >= 0) (maxValue - data) * (HEIGHT_TABLE_PX / maxValue)
+                else HEIGHT_TABLE_PX - (minValue - data) * (HEIGHT_TABLE_PX / minValue)
 
-            val x0 = 0f + widthTable * indx/30
-            points.add(PointF(x0, y0))
+            val x0 = widthTable - (distance * (pointCoordinates.size - index - 1))
+
+            if (x0 >= 0) points.add(PointF(x0, y0))
         }
 
-        Log.d("TAG", "TableHint: points = ${pointCoordinates.last()}")
         for (i in 0 until points.size - 1) {
             drawLine(
                 start = Offset(points[i].x, points[i].y),

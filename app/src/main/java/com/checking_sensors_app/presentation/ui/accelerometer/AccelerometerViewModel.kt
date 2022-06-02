@@ -24,11 +24,11 @@ class AccelerometerViewModel constructor(
     val sensorReadings: StateFlow<Triple<Float, Float, Float>> = _sensorReadings
     val sensorReadingsEmit: StateFlow<Triple<Float, Float, Float>> = _sensorReadings
 
-    private val _newPinch = MutableStateFlow(0f)
-    private val newPinch: StateFlow<Float> = _newPinch
+    private val _newPinch = MutableStateFlow<Float?>(null)
+    private val newPinch: StateFlow<Float?> = _newPinch
 
-    private val _emitPitch = MutableStateFlow(0f)
-    val emitPitch: StateFlow<Float> = _emitPitch
+    private val _emitPitch = MutableStateFlow<Float?>(null)
+    val emitPitch: StateFlow<Float?> = _emitPitch
 
     val mainHandler = Handler(Looper.getMainLooper())
 
@@ -71,9 +71,9 @@ class AccelerometerViewModel constructor(
         average: Float
     ) = when (ordinateNumber) {
         0 -> pitchMax
-        1 -> (average + average / 2)
+        1 -> (pitchMax + average) / 2
         2 -> (average)
-        3 -> (average - average / 2)
+        3 -> (pitchMin + average) / 2
         else -> pitchMin
     }.roundTo(context)
 
