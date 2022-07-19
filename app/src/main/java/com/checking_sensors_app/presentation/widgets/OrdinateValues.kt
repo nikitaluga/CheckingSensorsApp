@@ -11,13 +11,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.checking_sensors_app.presentation.ui.accelerometer.AccelerometerViewModel
+import com.checking_sensors_app.presentation.ui.accelerometer.SensorViewModel
 
 @Composable
 fun OrdinateValues(
     modifier: Modifier,
     heightTable: Dp,
-    viewModel: AccelerometerViewModel,
+    viewModel: SensorViewModel,
     pitchMax: Float,
     pitchMin: Float,
     average: Float

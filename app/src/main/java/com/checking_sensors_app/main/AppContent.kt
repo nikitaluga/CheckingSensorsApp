@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.checking_sensors_app.presentation.ui.HomeScreen
-import com.checking_sensors_app.presentation.ui.accelerometer.AccelerometerScreen
+import com.checking_sensors_app.presentation.ui.accelerometer.SensorsScreen
 
 @Composable
 fun AppContent() {
@@ -15,7 +15,7 @@ fun AppContent() {
             HomeScreen(navController)
         }
         composable(route = Screen.Accelerometer.route) {
-            AccelerometerScreen()
+            SensorsScreen()
         }
     }
 }

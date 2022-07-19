@@ -16,12 +16,12 @@ import com.checking_sensors_app.presentation.widgets.TitleCard
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun AccelerometerScreen(
+fun SensorsScreen(
     context: Context = LocalContext.current
 ) {
     val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    val viewModel = AccelerometerViewModel(context)
+    val viewModel = SensorViewModel(context)
 
     val azimuth = remember { mutableStateOf(0f) }
     val pitch = remember { mutableStateOf(0f) }

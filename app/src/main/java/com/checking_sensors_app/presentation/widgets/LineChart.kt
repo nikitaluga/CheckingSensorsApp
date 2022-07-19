@@ -5,13 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.checking_sensors_app.HEIGHT_TABLE_PX
+import com.checking_sensors_app.Ui.HEIGHT_TABLE_PX
 import com.checking_sensors_app.extensions.pxToDp
-import com.checking_sensors_app.presentation.ui.accelerometer.AccelerometerViewModel
+import com.checking_sensors_app.presentation.ui.accelerometer.SensorViewModel
 
 @Composable
 fun LineChart(
-    viewModel: AccelerometerViewModel,
+    viewModel: SensorViewModel,
     pitchMax: Float,
     pitchMin: Float,
     average: Float,

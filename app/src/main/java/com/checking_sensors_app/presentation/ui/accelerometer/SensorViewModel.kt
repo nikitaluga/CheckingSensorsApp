@@ -7,12 +7,19 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Handler
 import android.os.Looper
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.ViewModel
+import com.checking_sensors_app.data.DataStoreManager
 import com.checking_sensors_app.extensions.roundTo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class AccelerometerViewModel constructor(
+@HiltViewModel
+class SensorViewModel @Inject constructor(
     private val context: Context
 ) : ViewModel(), SensorEventListener {
 
@@ -76,5 +83,9 @@ class AccelerometerViewModel constructor(
         3 -> (pitchMin + average) / 2
         else -> pitchMin
     }.roundTo(context)
+
+    companion object {
+        val UPDATE_FREQUENCY_KEY = intPreferencesKey("update_frequency")
+    }
 
 }
